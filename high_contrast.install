@@ -5,15 +5,7 @@
  * Implementation of hook_install()
  */
 function high_contrast_install() {
-
-  require_once ("high_contrast.module");
-
-  //adjust weight
-  $max_weight = db_result(db_query_range("SELECT weight FROM {system} ORDER BY weight DESC", 0, 1));
-
-  db_query('UPDATE {system} SET weight = %d WHERE name = "high_contrast"', $max_weight + 1);
-
-  //set variables
+  // Set variables.
   variable_set("high_contrast_switcher_widget", "links");
   variable_set("high_contrast_switcher_label", "Contrast:");
   variable_set("high_contrast_high_label", "High");
@@ -27,13 +19,12 @@ function high_contrast_install() {
  */
 function high_contrast_uninstall() {
 
-  //Delete session variables
+  // Delete session variables.
   unset($_SESSION["high_contrast_activated"]);
 
-  //Delete variables
+  // Delete variables.
   $result = db_query('SELECT name FROM {variable} WHERE name LIKE "high_contrast_%"');
   while ($row = db_fetch_object($result)) {
     variable_del($row->name);
   }
 }
-

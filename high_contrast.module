@@ -14,6 +14,9 @@ TO-DO:
  */
 function high_contrast_init() {
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
+  if ($_SESSION['high_contrast_activated'] == 1) {
+    drupal_add_css(_high_contrast_get_current_css_styles(), array('type' => 'inline', 'weight' => '9999'));
+  }
 }
 
 /**
@@ -21,7 +24,7 @@ function high_contrast_init() {
  */
 function high_contrast_menu() {
 
-  $items['admin/settings/high-contrast'] = array(
+  $items['admin/config/user-interface/high-contrast'] = array(
     'title' => 'High Contrast',
     'description' => 'Settings related to High Contrast',
     'page callback' => 'drupal_get_form',
@@ -51,44 +54,51 @@ function high_contrast_menu() {
 }
 
 /**
- * Implementation of hook_block()
+ * Implements hook_block_info().
  */
-function high_contrast_block($op = 'list', $delta = 0, $edit = array()) {
-  if ($op == 'list') {
-    $blocks[0] = array(
-      'info' => t('High contrast switcher'),
-    );
-    return $blocks;
-  }
-  elseif ($op == 'view') {
-    switch ($delta) {
-      case 0:
+function high_contrast_block_info() {
+  $blocks = array();
 
-        $switcher = theme("high_contrast_switcher");
-        $block = array('subject' => ' ', 'content' => $switcher);
-        break;
-    }
-    return $block;
-  }
+  $blocks['high_contrast_switcher'] = array(
+    'info' => t('High contrast switcher'),
+    'cache' => DRUPAL_CACHE_GLOBAL,
+  );
+
+  return $blocks;
 }
 
 /**
- * Settings form
+ * Implements hook_block_view().
+ */
+function high_contrast_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'high_contrast_switcher':
+      $block['subject'] = '<none>';
+      $block['content'] = theme('high_contrast_switcher');
+    break;
+  }
+
+  return $block;
+}
+
+/**
+ * Settings form.
  */
 function high_contrast_settings_form() {
-
   $form = array();
 
   $widgets = array(
-    "links" => "Links",
-    //"select" => "Select list",
-    //"radio" => "Radio buttons",
+    'links' => 'Links',
+    //'select' => 'Select list',
+    //'radio' => 'Radio buttons',
   );
 
   $form['high_contrast_switcher_widget'] = array(
     '#type' => 'select',
     '#title' => t('Switcher widget'),
-    '#default_value' => _high_contrast_variable_get("high_contrast_switcher_widget"),
+    '#default_value' => _high_contrast_variable_get('high_contrast_switcher_widget'),
     '#options' => $widgets,
     '#required' => TRUE,
   );
@@ -96,28 +106,28 @@ function high_contrast_settings_form() {
   $form['high_contrast_switcher_label'] = array(
     '#type' => 'textfield',
     '#title' => t('Switcher label'),
-    '#default_value' => _high_contrast_variable_get("high_contrast_switcher_label"),
+    '#default_value' => _high_contrast_variable_get('high_contrast_switcher_label'),
     '#required' => TRUE,
   );
 
   $form['high_contrast_high_label'] = array(
     '#type' => 'textfield',
     '#title' => t('High contrast label'),
-    '#default_value' => _high_contrast_variable_get("high_contrast_high_label"),
+    '#default_value' => _high_contrast_variable_get('high_contrast_high_label'),
     '#required' => TRUE,
   );
 
   $form['high_contrast_separator'] = array(
     '#type' => 'textfield',
     '#title' => t('Separator'),
-    '#default_value' => _high_contrast_variable_get("high_contrast_separator"),
+    '#default_value' => _high_contrast_variable_get('high_contrast_separator'),
     '#required' => TRUE,
   );
 
   $form['high_contrast_normal_label'] = array(
     '#type' => 'textfield',
     '#title' => t('Normal contrast label'),
-    '#default_value' => _high_contrast_variable_get("high_contrast_normal_label"),
+    '#default_value' => _high_contrast_variable_get('high_contrast_normal_label'),
     '#required' => TRUE,
   );
 
@@ -136,26 +146,24 @@ function high_contrast_settings_form() {
 }
 
 /**
- * Menu callback to enable the high contrast styles
+ * Menu callback to enable the high contrast styles.
  */
 function high_contrast_enable_callback() {
-  $destination = $_GET["destination"];
-  high_contrast_switch(TRUE, $destination);
+  high_contrast_switch(TRUE, $_GET['destination']);
 }
 
 /**
  * Menu callback to disable the high contrast styles
  */
 function high_contrast_disable_callback() {
-  $destination = $_GET["destination"];
-  high_contrast_switch(FALSE, $destination);
+  high_contrast_switch(FALSE, $_GET['destination']);
 }
 
 /**
- * Enables/Disables high contrast styles and redirects the user to a destination url
+ * Enables/Disables high contrast styles and redirects the user to a destination url.
  */
-function high_contrast_switch($enable, $destination = "") {
-  $_SESSION["high_contrast_activated"] = $enable ? 1 : 0;
+function high_contrast_switch($enable, $destination = '') {
+  $_SESSION['high_contrast_activated'] = $enable ? 1 : 0;
 
   if (empty($destination)) {
     $destination = _high_contrast_get_current_url();
@@ -164,66 +172,42 @@ function high_contrast_switch($enable, $destination = "") {
   drupal_goto($destination);
 }
 
-/***** theme and preprocess functions *****/
-function high_contrast_preprocess_page(&$vars) {
-  if ($_SESSION["high_contrast_activated"] == 1) {
-    $vars["styles"] .= '<style type="text/css">' . _high_contrast_get_current_css_styles() . '</style>';
-  }
-}
-
-/**
- * Implementation of hook_theme()
- */
-function high_contrast_theme() {
-  return array(
-    'high_contrast_switcher' => array(
-      'arguments' => array('vars' => NULL),
-    ),
-    'high_contrast_switcher_links' => array(
-      'arguments' => array('vars' => NULL),
-    ),
-  );
-}
-
 function theme_high_contrast_switcher($vars) {
-  $code = theme("high_contrast_switcher_links");
+  $code = theme('high_contrast_switcher_links');
 
   /*
   //TO-DO: More widgets
-  $widget = _high_contrast_variable_get("high_contrast_widget");
-  
-  if ($widget == "select"){
-    $code = theme("high_contrast_switcher_select");
+  $widget = _high_contrast_variable_get('high_contrast_widget');
+
+  if ($widget == 'select'){
+    $code = theme('high_contrast_switcher_select');
   }
-  else if ($widget == "radio"){
-    $code = theme("high_contrast_switcher_radio");
+  else if ($widget == 'radio'){
+    $code = theme('high_contrast_switcher_radio');
   }
   else{
-    $code = theme("high_contrast_switcher_links");
+    $code = theme('high_contrast_switcher_links');
   }
   */
-
-
 
   return $code;
 }
 
 function theme_high_contrast_switcher_links($vars) {
-  $label = t(_high_contrast_variable_get("high_contrast_switcher_label"));
+  $label = t(_high_contrast_variable_get('high_contrast_switcher_label'));
 
   $current_url = _high_contrast_get_current_url();
 
-  if ($_SESSION["high_contrast_activated"] == 1) {
-    $link_high = t(_high_contrast_variable_get("high_contrast_high_label"));
-    $link_normal = l(t(_high_contrast_variable_get("high_contrast_normal_label")), 'high_contrast_disable', array('query' => 'destination=' . $current_url));
+  if ($_SESSION['high_contrast_activated'] == 1) {
+    $link_high = t(_high_contrast_variable_get('high_contrast_high_label'));
+    $link_normal = l(t(_high_contrast_variable_get('high_contrast_normal_label')), 'high_contrast_disable', array('query' => array('destination' => $current_url)));
   }
   else {
-
-    $link_high = l(t(_high_contrast_variable_get("high_contrast_high_label")), 'high_contrast_enable', array('query' => 'destination=' . $current_url));
-    $link_normal = t(_high_contrast_variable_get("high_contrast_normal_label"));
+    $link_high = l(t(_high_contrast_variable_get('high_contrast_high_label')), 'high_contrast_enable', array('query' => array('destination' => $current_url)));
+    $link_normal = t(_high_contrast_variable_get('high_contrast_normal_label'));
   }
 
-  $separator = t(_high_contrast_variable_get("high_contrast_separator"));
+  $separator = t(_high_contrast_variable_get('high_contrast_separator'));
 
   //output
   $code = '
@@ -237,15 +221,15 @@ function theme_high_contrast_switcher_links($vars) {
 
 /***** helper functions *****/
 function _high_contrast_variable_get($var) {
-  return (variable_get($var, ""));
+  return (variable_get($var, ''));
 }
 
 function _high_contrast_get_current_css_styles() {
-  $styles = _high_contrast_variable_get("high_contrast_css_styles");
+  $styles = _high_contrast_variable_get('high_contrast_css_styles');
 
   if (empty($styles)) {
     $styles = _high_contrast_get_default_css_styles();
-    variable_set("high_contrast_css_styles", $styles);
+    variable_set('high_contrast_css_styles', $styles);
   }
 
   return $styles;
@@ -253,17 +237,17 @@ function _high_contrast_get_current_css_styles() {
 
 function _high_contrast_get_current_url() {
   $page_url = 'http';
-  if ($_SERVER["HTTPS"] == "on") {
-    $page_url .= "s";
+  if ($_SERVER['HTTPS'] == 'on') {
+    $page_url .= 's';
   }
 
-  $page_url .= "://";
+  $page_url .= '://';
 
-  if ($_SERVER["SERVER_PORT"] != "80") {
-    $page_url .= $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . $_SERVER["REQUEST_URI"];
+  if ($_SERVER['SERVER_PORT'] != '80') {
+    $page_url .= $_SERVER['SERVER_NAME'] . ':' . $_SERVER['SERVER_PORT'] . $_SERVER['REQUEST_URI'];
   }
   else {
-    $page_url .= $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+    $page_url .= $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'];
   }
 
   return $page_url;
@@ -316,4 +300,3 @@ button{
 
   return $css;
 }
-
