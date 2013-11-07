@@ -38,18 +38,10 @@ function high_contrast_menu() {
   );
 
 
-  $items['high_contrast_enable'] = array(
+  $items['high_contrast_toggle'] = array(
     'title' => 'Activate high contrast styles',
     'description' => '',
-    'page callback' => 'high_contrast_enable_callback',
-    'access callback' => TRUE,
-    'type' => MENU_CALLBACK,
-  );
-
-  $items['high_contrast_disable'] = array(
-    'title' => 'Disable high contrast styles',
-    'description' => '',
-    'page callback' => 'high_contrast_disable_callback',
+    'page callback' => 'high_contrast_toggle_callback',
     'access callback' => TRUE,
     'type' => MENU_CALLBACK,
   );
@@ -152,15 +144,13 @@ function high_contrast_settings_form() {
 /**
  * Menu callback to enable the high contrast styles.
  */
-function high_contrast_enable_callback() {
-  high_contrast_switch(TRUE, $_GET['destination']);
-}
-
-/**
- * Menu callback to disable the high contrast styles
- */
-function high_contrast_disable_callback() {
-  high_contrast_switch(FALSE, $_GET['destination']);
+function high_contrast_toggle_callback() {
+  if ($_SESSION['high_contrast_activated'] == 1) {
+    high_contrast_switch(FALSE, $_GET['destination']);
+  }
+  else {
+    high_contrast_switch(TRUE, $_GET['destination']);
+  }
 }
 
 /**
@@ -174,6 +164,20 @@ function high_contrast_switch($enable, $destination = '') {
   }
 
   drupal_goto($destination);
+}
+
+/**
+ * Implementation of hook_theme()
+ */
+function high_contrast_theme() {
+  return array(
+    'high_contrast_switcher' => array(
+      'render element' => 'element',
+    ),
+    'high_contrast_switcher_links' => array(
+      'render element' => 'element',
+    ),
+  );
 }
 
 function theme_high_contrast_switcher($vars) {
@@ -204,10 +208,10 @@ function theme_high_contrast_switcher_links($vars) {
 
   if ($_SESSION['high_contrast_activated'] == 1) {
     $link_high = t(_high_contrast_variable_get('high_contrast_high_label'));
-    $link_normal = l(t(_high_contrast_variable_get('high_contrast_normal_label')), 'high_contrast_disable', array('query' => array('destination' => $current_url)));
+    $link_normal = l(t(_high_contrast_variable_get('high_contrast_normal_label')), 'high_contrast_toggle', array('query' => array('destination' => $current_url)));
   }
   else {
-    $link_high = l(t(_high_contrast_variable_get('high_contrast_high_label')), 'high_contrast_enable', array('query' => array('destination' => $current_url)));
+    $link_high = l(t(_high_contrast_variable_get('high_contrast_high_label')), 'high_contrast_toggle', array('query' => array('destination' => $current_url)));
     $link_normal = t(_high_contrast_variable_get('high_contrast_normal_label'));
   }
 
