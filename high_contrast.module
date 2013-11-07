@@ -177,7 +177,6 @@ function high_contrast_switch($enable, $destination = '') {
 }
 
 function theme_high_contrast_switcher($vars) {
-  die();
   $code = theme('high_contrast_switcher_links');
 
   /*
