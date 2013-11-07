@@ -177,6 +177,7 @@ function high_contrast_switch($enable, $destination = '') {
 }
 
 function theme_high_contrast_switcher($vars) {
+  die();
   $code = theme('high_contrast_switcher_links');
 
   /*
@@ -215,10 +216,15 @@ function theme_high_contrast_switcher_links($vars) {
 
   //output
   $code = '
-  <div class="high_contrast_switcher high_contrast_switcher_links">
-    <p><span class="high_contrast_switcher_label">' . $label . '</span><span class="high_contrast_switcher_high">' . $link_high . '</span><span class="high_contrast_switcher_separator">' . $separator . '</span><span class="high_contrast_switcher_normal">' . $link_normal . '</span></p>
-  </div>
-  ';
+    <div class="high_contrast_switcher high_contrast_switcher_links">
+      <p>
+        <span class="high_contrast_switcher_label">' . $label . '</span>' .
+        '<span class="high_contrast_switcher_high' . ($_SESSION['high_contrast_activated'] == 0 ? ' has-switcher-link' : '') . '">' . $link_high . '</span>' .
+        '<span class="high_contrast_switcher_separator">' . $separator . '</span>' .
+        '<span class="high_contrast_switcher_normal' . ($_SESSION['high_contrast_activated'] == 1 ? ' has-switcher-link' : '') . '">' . $link_normal . '</span>' .
+      '</p>
+    </div>
+    ';
 
   return $code;
 }
