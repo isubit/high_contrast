@@ -13,7 +13,7 @@ TO-DO:
  */
 function high_contrast_init() {
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
-  if ($_SESSION['high_contrast_activated'] == 1) {
+  if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
     drupal_add_css(_high_contrast_get_current_css_styles(), array(
       'group' => 10000,
       'type' => 'inline',
