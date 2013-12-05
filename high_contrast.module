@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Hight contrast main file.
+ */
+
 /*
 TO-DO:
  - Provide hooks: hook_high_contrast_enable, hook_high_contrast_disable
@@ -13,7 +18,7 @@ TO-DO:
 define('HIGH_CONTRAST_CSS_PATH', 'css/high_contrast.css');
 
 /**
- * Implementation of hook_init()
+ * Implements hook_init().
  */
 function high_contrast_init() {
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
@@ -27,7 +32,7 @@ function high_contrast_init() {
 }
 
 /**
- * Implementation of hook_menu()
+ * Implements hook_menu().
  */
 function high_contrast_menu() {
 
@@ -39,7 +44,6 @@ function high_contrast_menu() {
     'access callback' => 'user_access',
     'access arguments' => array('administer site configuration'),
   );
-
 
   $items['high_contrast_toggle'] = array(
     'title' => 'Activate high contrast styles',
@@ -76,7 +80,7 @@ function high_contrast_block_view($delta = '') {
     case 'high_contrast_switcher':
       $block['subject'] = '<none>';
       $block['content'] = theme('high_contrast_switcher');
-    break;
+      break;
   }
 
   return $block;
@@ -91,8 +95,8 @@ function high_contrast_settings_form() {
 
   $widgets = array(
     'links' => 'Links',
-    //'select' => 'Select list',
-    //'radio' => 'Radio buttons',
+    // 'select' => 'Select list',
+    // 'radio' => 'Radio buttons',
   );
 
   $form['high_contrast_switcher_widget'] = array(
@@ -131,7 +135,7 @@ function high_contrast_settings_form() {
     '#required' => TRUE,
   );
 
-  if(!_high_contrast_css_exists()) {
+  if (!_high_contrast_css_exists()) {
     $form['high_contrast_css_styles'] = array(
       '#type' => 'textarea',
       '#title' => t('Used CSS styles'),
@@ -147,7 +151,10 @@ function high_contrast_settings_form() {
   else {
     $form['high_contrast_css_styles'] = array(
       '#type' => 'item',
-      '#markup' => t('High contrast is using ' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH),
+      '#markup' => t('High contrast is using !css_path',
+        array(
+          '!css_path' =>  . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH),
+        ),
     );
   }
 
@@ -163,7 +170,7 @@ function high_contrast_settings_form() {
     '#title' => t('Use the default logo (file named logo-hg in your theme folder if it exists'),
     '#default_value' => _high_contrast_variable_get('high_contrast_default_logo'),
     '#tree' => FALSE,
-    '#description' => t('Check here if you want the theme to use the logo supplied with it.')
+    '#description' => t('Check here if you want the theme to use the logo supplied with it.'),
   );
 
   $form['high_contrast_logo']['high_contrast_settings'] = array(
@@ -187,7 +194,7 @@ function high_contrast_settings_form() {
     '#type' => 'file',
     '#title' => t('Upload high contrast logo image'),
     '#maxlength' => 40,
-    '#description' => t("If you don't have direct file access to the server, use this field to upload your logo.")
+    '#description' => t("If you don't have direct file access to the server, use this field to upload your logo."),
   );
 
   $form = system_settings_form($form);
@@ -265,7 +272,7 @@ function high_contrast_settings_form_submit($form, &$form_state) {
     $values['high_contrast_logo_path'] = _high_contrast_theme_settings_validate_path($values['high_contrast_logo_path']);
   }
 
-  foreach($values as $key => $val) {
+  foreach ($values as $key => $val) {
     variable_set($key, $val);
   }
 
@@ -287,7 +294,8 @@ function high_contrast_toggle_callback() {
 }
 
 /**
- * Enables/Disables high contrast styles and redirects the user to a destination url.
+ * Enables/Disables high contrast styles and redirects the user to a
+ * destination url.
  */
 function high_contrast_switch($enable, $destination = '') {
   $_SESSION['high_contrast_activated'] = $enable ? 1 : 0;
@@ -300,7 +308,7 @@ function high_contrast_switch($enable, $destination = '') {
 }
 
 /**
- * Implementation of hook_theme()
+ * Implements hook_theme().
  */
 function high_contrast_theme() {
   return array(
@@ -313,6 +321,9 @@ function high_contrast_theme() {
   );
 }
 
+/**
+ * Theme function for high contrast switcher.
+ */
 function theme_high_contrast_switcher($vars) {
   $code = theme('high_contrast_switcher_links');
 
@@ -321,19 +332,22 @@ function theme_high_contrast_switcher($vars) {
   $widget = _high_contrast_variable_get('high_contrast_widget');
 
   if ($widget == 'select'){
-    $code = theme('high_contrast_switcher_select');
+  $code = theme('high_contrast_switcher_select');
   }
   else if ($widget == 'radio'){
-    $code = theme('high_contrast_switcher_radio');
+  $code = theme('high_contrast_switcher_radio');
   }
   else{
-    $code = theme('high_contrast_switcher_links');
+  $code = theme('high_contrast_switcher_links');
   }
   */
 
   return $code;
 }
 
+/**
+ * Get HTML for switcher links().
+ */
 function theme_high_contrast_switcher_links($vars) {
   $label = t(_high_contrast_variable_get('high_contrast_switcher_label'));
 
@@ -348,9 +362,9 @@ function theme_high_contrast_switcher_links($vars) {
     $link_normal = t(_high_contrast_variable_get('high_contrast_normal_label'));
   }
 
-  $separator = t(_high_contrast_variable_get('high_contrast_separator'));
+  $separator = _high_contrast_variable_get('high_contrast_separator');
 
-  //output
+  // Output.
   $code = '
     <div class="high_contrast_switcher high_contrast_switcher_links">
       <p>
@@ -365,11 +379,22 @@ function theme_high_contrast_switcher_links($vars) {
   return $code;
 }
 
-/***** helper functions *****/
+
+
+/********************************************//**
+ * HELPER FUNCTIONS.
+ ***********************************************/
+
+/**
+ * Wrapper for variable_get().
+ */
 function _high_contrast_variable_get($var) {
   return (variable_get($var, ''));
 }
 
+/**
+ * Get default css styles if none exist yet.
+ */
 function _high_contrast_get_current_css_styles() {
   $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
 
@@ -388,6 +413,9 @@ function _high_contrast_get_current_css_styles() {
   return $styles;
 }
 
+/**
+ * Get current url.
+ */
 function _high_contrast_get_current_url() {
   $page_url = 'http';
   if ($_SERVER['HTTPS'] == 'on') {
@@ -406,6 +434,9 @@ function _high_contrast_get_current_url() {
   return $page_url;
 }
 
+/**
+ * Default CSS.
+ */
 function _high_contrast_get_default_css_styles() {
 
   $color1 = 'black';
@@ -461,9 +492,10 @@ button{
  * directory, or stream wrapper URIs. If the given path is any of the above,
  * returns a valid path or URI that the theme system can display.
  *
- * @param $path
+ * @param string $path
  *   A path relative to the Drupal root or to the public files directory, or
  *   a stream wrapper URI.
+ *
  * @return mixed
  *   A valid path that can be displayed through the theme system, or FALSE if
  *   the path could not be validated.
@@ -489,7 +521,6 @@ function _high_contrast_theme_settings_validate_path($path) {
 
 /**
  * Helper function to find out if the css/high_contrast.css exists.
- *
  */
 function _high_contrast_css_exists() {
   $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
