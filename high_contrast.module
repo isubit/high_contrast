@@ -21,13 +21,23 @@ define('HIGH_CONTRAST_CSS_PATH', 'css/high_contrast.css');
  * Implements hook_init().
  */
 function high_contrast_init() {
+  $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
+
   if ($_SESSION['high_contrast_activated'] == 1) {
-    drupal_add_css(_high_contrast_get_current_css_styles(), array(
-      'group' => 10000,
-      'type' => 'inline',
-      'weight' => 10000,
-    ));
+    if (_high_contrast_css_exists()) {
+      drupal_add_css($theme_path . '/' . HIGH_CONTRAST_CSS_PATH, array(
+        'group' => 10000,
+        'weight' => 10000,
+      ));
+    }
+    else {
+      drupal_add_css(_high_contrast_get_current_css_styles(), array(
+        'group' => 10000,
+        'type' => 'inline',
+        'weight' => 10000,
+      ));
+    }
   }
 }
 
