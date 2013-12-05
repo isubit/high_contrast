@@ -151,7 +151,7 @@ function high_contrast_settings_form() {
   else {
     $form['high_contrast_css_styles'] = array(
       '#type' => 'item',
-      '#markup' => t('High contrast is using !css_path', array('!css_path' =>  . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH),),
+      '#markup' => t('High contrast is using !css_path', array('!css_path' => $theme_path . '/' . HIGH_CONTRAST_CSS_PATH)),
     );
   }
 
@@ -378,7 +378,7 @@ function theme_high_contrast_switcher_links($vars) {
 
 /**
  * HELPER FUNCTIONS.
-*/
+ */
 
 /**
  * Wrapper for variable_get().
