@@ -423,7 +423,7 @@ function _high_contrast_get_current_css_styles() {
  */
 function _high_contrast_get_current_url() {
   $page_url = 'http';
-  if ($_SERVER['HTTPS'] == 'on') {
+  if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') {
     $page_url .= 's';
   }
 
