@@ -24,7 +24,7 @@ function high_contrast_init() {
   $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
 
-  if ($_SESSION['high_contrast_activated'] == 1) {
+  if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
     if (_high_contrast_css_exists()) {
       drupal_add_css($theme_path . '/' . HIGH_CONTRAST_CSS_PATH, array(
         'group' => 10000,
