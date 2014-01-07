@@ -24,6 +24,9 @@ function high_contrast_init() {
   $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
 
+  drupal_add_js(array('highContrast' => array('link' => _high_contrast_link())), 'setting');
+  drupal_add_js(drupal_get_path('module', 'high_contrast') . '/js/high_contrast_link.js', array('scope' => 'footer'));
+
   if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
     if (_high_contrast_css_exists()) {
       drupal_add_css($theme_path . '/' . HIGH_CONTRAST_CSS_PATH, array(
@@ -548,4 +551,21 @@ function _high_contrast_css_exists() {
   else {
     return FALSE;
   }
+}
+
+/**
+ * Return high contrast toggle link HTML.
+ * @return string HTML for toggle link.
+ */
+function _high_contrast_link() {
+  return l(
+    t('Toggle high contrast'),
+    'high_contrast_toggle', array(
+      'query' => array('destination' => _high_contrast_get_current_url()),
+      'attributes' => array(
+        'class' => array('element-invisible', 'element-focusable'),
+        'rel' => 'nofollow',
+      ),
+    )
+  );
 }
