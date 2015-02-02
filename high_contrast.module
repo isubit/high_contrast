@@ -362,7 +362,7 @@ function theme_high_contrast_switcher_links($vars) {
 
   $current_url = _high_contrast_get_current_url();
 
-  if ($_SESSION['high_contrast_activated'] == 1) {
+  if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
     $link_high = t(_high_contrast_variable_get('high_contrast_high_label'));
     $link_normal = l(
       t(_high_contrast_variable_get('high_contrast_normal_label')),
@@ -391,9 +391,9 @@ function theme_high_contrast_switcher_links($vars) {
     <div class="high_contrast_switcher high_contrast_switcher_links">
       <p>
         <span class="high_contrast_switcher_label">' . $label . '</span>' .
-        '<span class="high_contrast_switcher_high' . ($_SESSION['high_contrast_activated'] == 0 ? ' has-switcher-link' : '') . '">' . $link_high . '</span>' .
+        '<span class="high_contrast_switcher_high' . (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 0 ? ' has-switcher-link' : '') . '">' . $link_high . '</span>' .
         '<span class="high_contrast_switcher_separator">' . $separator . '</span>' .
-        '<span class="high_contrast_switcher_normal' . ($_SESSION['high_contrast_activated'] == 1 ? ' has-switcher-link' : '') . '">' . $link_normal . '</span>' .
+        '<span class="high_contrast_switcher_normal' . (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1 ? ' has-switcher-link' : '') . '">' . $link_normal . '</span>' .
       '</p>
     </div>
     ';
