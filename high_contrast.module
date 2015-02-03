@@ -401,6 +401,14 @@ function theme_high_contrast_switcher_links($vars) {
   return $code;
 }
 
+/**
+ * Implements hook_preprocess_html().
+ */
+function high_contrast_preprocess_html(&$vars) {
+  if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
+    $vars['classes_array'][] = 'high-contrast';
+  }
+}
 
 /**
  * HELPER FUNCTIONS.
