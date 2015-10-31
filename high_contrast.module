@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Hight contrast main file.
+ * High Contrast main module file.
  */
 
 /*
@@ -45,7 +45,7 @@ function high_contrast_init() {
   }
 
   drupal_add_js(array('highContrast' => $js_settings), 'setting');
-  drupal_add_js(drupal_get_path('module', 'high_contrast') . '/js/high_contrast_link.js', array('scope' => 'footer'));
+  drupal_add_js(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.js', array('scope' => 'footer'));
 }
 
 /**

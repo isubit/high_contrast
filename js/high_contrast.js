@@ -1,3 +1,8 @@
+/**
+ * @file
+ * High Contrast js file.
+ */
+
 (function($) {
   /**
    * Enable the high contrast styles.
