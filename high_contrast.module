@@ -33,8 +33,10 @@ function high_contrast_init() {
     setcookie('high_contrast_css_file_path', '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH, 0, '/');
   }
   else {
-    // @todo: create temp file and add path to high_contrast_css_file_path cookie
-    // $js_settings['fileInline'] = _high_contrast_get_current_css_styles();
+    // @todo: should nob be writte on every request.
+    $current_css_path = 'public://high_contrast_current.css';
+    file_unmanaged_save_data(_high_contrast_get_current_css_styles(), $current_css_path, FILE_EXISTS_REPLACE);
+    setcookie('high_contrast_css_file_path', file_create_url($current_css_path), 0, '/');
   }
 
   // Set high contrast logo path.
