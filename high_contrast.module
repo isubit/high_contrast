@@ -47,16 +47,10 @@ function high_contrast_init() {
     $high_contrast['logoPath'] = file_create_url($theme_path . '/logo-hg.png');
   }
 
-  drupal_add_js('var highContrast = ' . json_encode($high_contrast), array(
-      'type' => 'inline',
-      'weight' => '-1000',
-      'group' => '-999',
-    )
-  );
-
   // Load main js as first script and after last css.
   // Should be fastest execution time.
-  drupal_add_js(file_get_contents(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.js'), array(
+  drupal_add_js('var highContrast = ' . json_encode($high_contrast) . ';' .
+    file_get_contents(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.min.js'), array(
       'type' => 'inline',
       'weight' => '-999',
       'group' => '-999',
