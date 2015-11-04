@@ -1,6 +1,8 @@
 /**
  * @file
  * High Contrast js file.
+ *
+ * http://jscompress.com/ was used to create the high_contrast.min.js file.
  */
 
 (function() {
