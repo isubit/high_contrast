@@ -27,25 +27,34 @@ function high_contrast_init() {
   // @todo: needed?
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
 
-  setcookie('high_contrast_link', _high_contrast_link(), 0, '/');
+  $high_contrast = array(
+    'link' => _high_contrast_link(),
+  );
 
   if (_high_contrast_css_exists()) {
-    setcookie('high_contrast_css_file_path', '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH, 0, '/');
+    $high_contrast['cssFilePath'] = '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH;
   }
   else {
     // @todo: should nob be writte on every request.
     $current_css_path = 'public://high_contrast_current.css';
     file_unmanaged_save_data(_high_contrast_get_current_css_styles(), $current_css_path, FILE_EXISTS_REPLACE);
-    setcookie('high_contrast_css_file_path', file_create_url($current_css_path), 0, '/');
+    $high_contrast['cssFilePath'] = file_create_url($current_css_path);
   }
 
   // Set high contrast logo path.
   if (_high_contrast_variable_get('high_contrast_default_logo') == 0 && _high_contrast_variable_get('high_contrast_logo_path') !== '') {
-    setcookie('high_contrast_logo_path', file_create_url(_high_contrast_variable_get('high_contrast_logo_path')), 0, '/');
+    $high_contrast['logoPath'] = file_create_url(_high_contrast_variable_get('high_contrast_logo_path'));
   }
   elseif (file_exists($theme_path . '/logo-hg.png')) {
-    setcookie('high_contrast_logo_path', file_create_url($theme_path . '/logo-hg.png'), 0, '/');
+    $high_contrast['logoPath'] = file_create_url($theme_path . '/logo-hg.png');
   }
+
+  drupal_add_js('var highContrast = ' . json_encode($high_contrast), array(
+      'type' => 'inline',
+      'weight' => '-1000',
+      'group' => '-999',
+    )
+  );
 
   // Load main js as first script and after last css.
   // Should be fastest execution time.

@@ -33,7 +33,7 @@
    */
   var enableHighContrastLogo = function() {
     var logoBlock = document.getElementById('block-delta-blocks-logo');
-    var logoPath = Cookies.get('high_contrast_logo_path');
+    var logoPath = highContrast.logoPath;
     if (document.querySelectorAll && typeof logoPath !== 'undefined' && logoBlock !== null) {
       var logo = logoBlock.querySelectorAll('img');
       if (typeof logo[0].logoPathOriginal === 'undefined') {
@@ -48,7 +48,7 @@
    */
   var disableHighContrastLogo = function() {
     var logoBlock = document.getElementById('block-delta-blocks-logo');
-    var logoPath = Cookies.get('high_contrast_logo_path');
+    var logoPath = highContrast.logoPath;
     if (document.querySelectorAll && typeof logoPath !== 'undefined' && logoBlock !== null) {
       var logo = logoBlock.querySelectorAll('img');
       if (typeof logo[0].logoPathOriginal !== 'undefined') {
@@ -62,7 +62,7 @@
    */
   var enableStyles = function() {
     disableStyles();
-    var cssFilePath = Cookies.get('high_contrast_css_file_path');
+    var cssFilePath = highContrast.cssFilePath;
     if (typeof cssFilePath !== 'undefined') {
       var link = str2DOMElement('<link type="text/css" id="high-contrast-css" rel="stylesheet" href="' + cssFilePath + '" media="screen" />');
       // Add link after placeholder.
@@ -84,12 +84,12 @@
   };
 
   /**
-   * Check if high contrast is set or not using high_contrast_activated cookie.
+   * Check if high contrast is set or not using highContrastActivated cookie.
    *
    * @returns {boolean}
    */
   var isHighContrastEnabled = function() {
-    var highContrastEnabled = Cookies.get('high_contrast_activated');
+    var highContrastEnabled = Cookies.get('highContrastActivated');
     if (highContrastEnabled === null) {
       return false;
     }
@@ -107,11 +107,11 @@
   var toggleHighContrast = function() {
     if (isHighContrastEnabled()) {
       disableStyles();
-      Cookies.set('high_contrast_activated', 'false', '/');
+      Cookies.set('highContrastActivated', 'false', '/');
     }
     else {
       enableStyles();
-      Cookies.set('high_contrast_activated', 'true', '/');
+      Cookies.set('highContrastActivated', 'true', '/');
     }
   };
 
@@ -119,7 +119,7 @@
    * Append the high contrast toggle link after skip-link.
    */
   var includeHighContrastLink = function() {
-    var highContrastLink = Cookies.get('high_contrast_link').replace(/\+/g, ' ');
+    var highContrastLink = highContrast.link;
     highContrastLink = str2DOMElement(highContrastLink);
     highContrastLink.onclick = function() {
       toggleHighContrast();
