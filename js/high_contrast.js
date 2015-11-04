@@ -90,7 +90,7 @@
    */
   var isHighContrastEnabled = function() {
     var highContrastEnabled = Cookies.get('highContrastActivated');
-    if (highContrastEnabled === null) {
+    if (typeof highContrastEnabled === 'undefined') {
       return false;
     }
     else if (highContrastEnabled === 'false') {
