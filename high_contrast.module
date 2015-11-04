@@ -24,28 +24,42 @@ function high_contrast_init() {
   drupal_add_js('misc/jquery.cookie.js');
 
   $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
+  // @todo: needed?
   drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
 
-  $js_settings = array(
-    'link' => _high_contrast_link(),
-  );
+  setcookie('high_contrast_link', _high_contrast_link(), 0, '/');
 
   if (_high_contrast_css_exists()) {
-    $js_settings['filePath'] = '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH;
+    setcookie('high_contrast_css_file_path', '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH, 0, '/');
   }
   else {
-    $js_settings['fileInline'] = _high_contrast_get_current_css_styles();
+    // @todo: create temp file and add path to high_contrast_css_file_path cookie
+    // $js_settings['fileInline'] = _high_contrast_get_current_css_styles();
   }
 
+  // Set high contrast logo path.
   if (_high_contrast_variable_get('high_contrast_default_logo') == 0 && _high_contrast_variable_get('high_contrast_logo_path') !== '') {
-    $js_settings['logoPath'] = file_create_url(_high_contrast_variable_get('high_contrast_logo_path'));
+    setcookie('high_contrast_logo_path', file_create_url(_high_contrast_variable_get('high_contrast_logo_path')), 0, '/');
   }
   elseif (file_exists($theme_path . '/logo-hg.png')) {
-    $js_settings['logoPath'] = file_create_url($theme_path . '/logo-hg.png');
+    setcookie('high_contrast_logo_path', file_create_url($theme_path . '/logo-hg.png'), 0, '/');
   }
 
-  drupal_add_js(array('highContrast' => $js_settings), 'setting');
-  drupal_add_js(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.js', array('scope' => 'footer'));
+  // Load main js as first script and after last css.
+  // Should be fastest execution time.
+  drupal_add_js(file_get_contents(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.js'), array(
+      'type' => 'inline',
+      'weight' => '-999',
+      'group' => '-999',
+    )
+  );
+}
+
+function high_contrast_js_alter(&$javascript) {
+  if (isset($javascript['misc/jquery.cookie.js'])) {
+    $javascript['misc/jquery.cookie.js']['group'] = -100;
+    $javascript['misc/jquery.cookie.js']['weight'] = -0.2;
+  }
 }
 
 /**
