@@ -5,6 +5,8 @@
  * http://jscompress.com/ was used to create the high_contrast.min.js file.
  */
 
+var drupalHighContrast;
+
 (function() {
   // Create fast 'hook' into DOM where to attach the css.
   document.write("<script type='text/javascript' id='high-contrast-css-placeholder'>\x3C/script>");
@@ -130,6 +132,10 @@
     };
     document.getElementById('skip-link').appendChild(highContrastLink);
   };
+
+  // Create global methods for enabling/disabling high contrast.
+  drupalHighContrast.enableStyles = enableStyles();
+  drupalHighContrast.disableStyles = disableStyles();
 
   // Init on page load.
   if (isHighContrastEnabled()) {
