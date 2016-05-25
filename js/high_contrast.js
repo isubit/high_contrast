@@ -7,7 +7,7 @@
 
 (function() {
   // Create fast 'hook' into DOM where to attach the css.
-  document.write('<script type="text/javascript" id="high-contrast-css-placeholder"></script>');
+  document.write("<script type='text/javascript' id='high-contrast-css-placeholder'>\x3C/script>");
   var placeholder = document.getElementById('high-contrast-css-placeholder');
 
   /*!
