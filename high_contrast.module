@@ -49,8 +49,11 @@ function high_contrast_init() {
 
   // Load main js as first script and after last css.
   // Should be fastest execution time.
+  $high_contrast_min = file_get_contents(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.min.js');
+  // Fix 'Uncaught SyntaxError: Unexpected token ILLEGAL' in Chrome.
+  $high_contrast_min = str_replace('id=\'high-contrast-css-placeholder\'></script>', 'id=\'high-contrast-css-placeholder\'>\x3C/script>', $high_contrast_min);
   drupal_add_js('var highContrast = ' . json_encode($high_contrast) . ';' .
-    file_get_contents(drupal_get_path('module', 'high_contrast') . '/js/high_contrast.min.js'), array(
+    $high_contrast_min, array(
       'type' => 'inline',
       'weight' => '-999',
       'group' => '-999',
