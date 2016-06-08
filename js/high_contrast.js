@@ -65,15 +65,18 @@ var drupalHighContrast = {};
    * Enable the high contrast styles.
    */
   var enableStyles = function() {
-    disableStyles();
     var cssFilePath = highContrast.cssFilePath;
     if (typeof cssFilePath !== 'undefined') {
-      var link = str2DOMElement('<link type="text/css" id="high-contrast-css" rel="stylesheet" href="' + cssFilePath + '" media="screen" />');
+      var link = document.getElementById('high-contrast-css');
+      if (link === null) {
+        link = str2DOMElement('<link type="text/css" id="high-contrast-css" rel="stylesheet" href="' + cssFilePath + '" media="screen" />');
+      }
       // Add link after placeholder.
       // http://stackoverflow.com/questions/7258185/javascript-append-child-after-element
       placeholder.parentNode.insertBefore(link, placeholder.nextSibling);
     }
     enableHighContrastLogo();
+    Cookies.set('highContrastActivated', 'true', '/');
   };
 
   /**
@@ -85,6 +88,7 @@ var drupalHighContrast = {};
       link.parentNode.removeChild(link);
     }
     disableHighContrastLogo();
+    Cookies.set('highContrastActivated', 'false', '/');
   };
 
   /**

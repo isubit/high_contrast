@@ -340,29 +340,18 @@ function theme_high_contrast_switcher($vars) {
 function theme_high_contrast_switcher_links($vars) {
   $label = t(_high_contrast_variable_get('high_contrast_switcher_label'));
 
-  $current_url = drupal_get_destination();
-
-  if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
-    $link_high = t(_high_contrast_variable_get('high_contrast_high_label'));
-    $link_normal = l(
-      t(_high_contrast_variable_get('high_contrast_normal_label')),
-      'high_contrast_toggle',
-      array(
-        'query' => array('destination' => $current_url['destination']),
-        'attributes' => array('rel' => 'nofollow'),
-      )
-    );
-  }
-  else {
-    $link_high = l(
-      t(_high_contrast_variable_get('high_contrast_high_label')),
-      'high_contrast_toggle', array(
-        'query' => array('destination' => $current_url['destination']),
-        'attributes' => array('rel' => 'nofollow'),
-      )
-    );
-    $link_normal = t(_high_contrast_variable_get('high_contrast_normal_label'));
-  }
+  $link_high = l(t(_high_contrast_variable_get('high_contrast_high_label')),
+    'javascript:drupalHighContrast.enableStyles()', array(
+      'fragment' => '',
+      'external' => TRUE
+    )
+  );
+  $link_normal = l(t(_high_contrast_variable_get('high_contrast_normal_label')),
+    'javascript:drupalHighContrast.disableStyles()', array(
+      'fragment' => '',
+      'external' => TRUE
+    )
+  );
 
   $separator = _high_contrast_variable_get('high_contrast_separator');
 
@@ -371,9 +360,9 @@ function theme_high_contrast_switcher_links($vars) {
     <div class="high_contrast_switcher high_contrast_switcher_links">
       <p>
         <span class="high_contrast_switcher_label">' . $label . '</span>' .
-        '<span class="high_contrast_switcher_high' . (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 0 ? ' has-switcher-link' : '') . '">' . $link_high . '</span>' .
+        '<span class="high_contrast_switcher_high">' . $link_high . '</span>' .
         '<span class="high_contrast_switcher_separator">' . $separator . '</span>' .
-        '<span class="high_contrast_switcher_normal' . (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1 ? ' has-switcher-link' : '') . '">' . $link_normal . '</span>' .
+        '<span class="high_contrast_switcher_normal">' . $link_normal . '</span>' .
       '</p>
     </div>
     ';
