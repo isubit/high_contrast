@@ -340,15 +340,25 @@ function theme_high_contrast_switcher($vars) {
 function theme_high_contrast_switcher_links($vars) {
   $label = t(_high_contrast_variable_get('high_contrast_switcher_label'));
 
-  $link_high = l(t(_high_contrast_variable_get('high_contrast_high_label')),
-    'javascript:drupalHighContrast.enableStyles()', array(
-      'fragment' => '',
+  $link_high = l(
+    t(_high_contrast_variable_get('high_contrast_high_label')),
+    '',
+    array(
+      'attributes' => array(
+        'id' => 'high-contrast-high-link'
+      ),
+      'fragment' => 'highContrastHigh',
       'external' => TRUE
     )
   );
-  $link_normal = l(t(_high_contrast_variable_get('high_contrast_normal_label')),
-    'javascript:drupalHighContrast.disableStyles()', array(
-      'fragment' => '',
+  $link_normal = l(
+    t(_high_contrast_variable_get('high_contrast_normal_label')),
+    '',
+    array(
+      'attributes' => array(
+        'id' => 'high-contrast-normal-link'
+      ),
+      'fragment' => 'highContrastNormal',
       'external' => TRUE
     )
   );
@@ -377,6 +387,13 @@ function high_contrast_preprocess_html(&$vars) {
   if (isset($_SESSION['high_contrast_activated']) && $_SESSION['high_contrast_activated'] == 1) {
     $vars['classes_array'][] = 'high-contrast';
   }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function high_contrast_preprocess_page(&$vars) {
+  drupal_add_js(drupal_get_path('module', 'high_contrast').'/js/high_contrast_bind.js');
 }
 
 /**
