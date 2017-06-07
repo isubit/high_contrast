@@ -23,7 +23,7 @@ define('HIGH_CONTRAST_CSS_PATH', 'css/high_contrast.css');
 function high_contrast_init() {
   $theme_path = drupal_get_path('theme', variable_get('theme_default', NULL));
   // @todo: needed?
-  drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css';
+  drupal_add_css(drupal_get_path('module', 'high_contrast') . '/high_contrast.css');
 
   $high_contrast = array(
     'link' => _high_contrast_link(),
@@ -33,7 +33,7 @@ function high_contrast_init() {
     $high_contrast['cssFilePath'] = '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH;
   }
   else {
-    $high_contrast['cssFilePath'] = '/' . drupal_get_path('module', 'high_contrast') . '/css/high_contrast.css');
+    $high_contrast['cssFilePath'] = '/' . drupal_get_path('module', 'high_contrast') . '/css/high_contrast.css';
   }
 
   // Set high contrast logo path.
