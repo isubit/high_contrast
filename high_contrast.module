@@ -33,10 +33,7 @@ function high_contrast_init() {
     $high_contrast['cssFilePath'] = '/' . $theme_path . '/' . HIGH_CONTRAST_CSS_PATH;
   }
   else {
-    // @todo: should nob be written on every request.
-    $current_css_path = 'public://high_contrast_current.css';
-    file_unmanaged_save_data(_high_contrast_get_current_css_styles(), $current_css_path, FILE_EXISTS_REPLACE);
-    $high_contrast['cssFilePath'] = file_create_url($current_css_path);
+    $high_contrast['cssFilePath'] = '/' . drupal_get_path('module', 'high_contrast') . '/css/high_contrast.css');
   }
 
   // Set high contrast logo path.
